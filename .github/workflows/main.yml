@@ -1,0 +1,76 @@
+on:
+  workflow_call:
+    inputs:
+      ssh_host:
+        required: true
+        type: string
+      ssh_username:
+        required: true
+        type: string
+      ssh_port:
+        required: true
+        type: number
+        default: 9000
+      production_base_url:
+        required: true
+        type: string
+        description: Base URL of the production site
+      tested_paths:
+        required: true
+        type: string
+        description: |
+          JSON list of paths from the site of this project to run the checks against, without base URL
+          For example,
+          ["/contacts", "/login", "/products/123-mega-pack"]
+    secrets:
+      page_speed_insights_key:
+        required: true
+      ssbranch_psi_ssh_key:
+        required: true
+
+jobs:
+  run_psi:
+    runs-on: ubuntu-latest
+    name: Running Page Speed Insights on a testing version of the site
+    steps:
+      - name: Deploy a branch
+        uses: appleboy/ssh-action@master
+        id: ssbranch-ssh
+        with:
+          host: ${{ inputs.ssh_host }}
+          username: ${{ inputs.ssh_username }}
+          key: ${{ secrets.ssbranch_psi_ssh_key }}
+          port: ${{ inputs.ssh_port }}
+          script: "ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction;"
+      - name: Undeploy a branch
+        uses: appleboy/ssh-action@master
+        id: ssbranch-ssh
+        with:
+          host: ${{ inputs.ssh_host }}
+          username: ${{ inputs.ssh_username }}
+          key: ${{ secrets.ssbranch_psi_ssh_key }}
+          port: ${{ inputs.ssh_port }}
+          script: "ssbranch remove ${{ github.head_ref }} --no-interaction;"
+#      - name: Checkout repository
+#        uses: actions/checkout@v1
+#      - name: Run Page Speed Insights
+#        uses: ./
+#        id: psi
+#        with:
+#          production_base_url: ${{ inputs.production_base_url }}
+#          ssbranch_subdomain_short: ${{ github.head_ref }}
+#          tested_paths: ${{ inputs.tested_paths }}
+#          threshold: 85
+#          psi_key: ${{ secrets.page_speed_insights_key }}
+#      - name: Format report results
+#        id: format
+#        uses: actions/github-script@v3
+#        with:
+#          script: |
+#      - name: Leave comment with report results on PR
+#        id: comment_to_pr
+#        uses: marocchino/sticky-pull-request-comment@v2.2.0
+#        with:
+#          header: Page Speed Insights report for PR \#${{ github.event.pull_request.number }}
+#          hide_and_recreate: true
+#          message: ${{steps.psi.outputs.report}}
