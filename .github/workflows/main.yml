@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       ssh_port:
-        required: true
+        required: false
         type: number
         default: 9000
       production_base_url:
@@ -21,7 +21,7 @@ on:
         description: |
           JSON list of paths from the site of this project to run the checks against, without base URL
           For example,
-          ["/contacts", "/login", "/products/123-mega-pack"]
+          '["/contacts", "/login", "/products/123-mega-pack"]'
     secrets:
       page_speed_insights_key:
         required: true
