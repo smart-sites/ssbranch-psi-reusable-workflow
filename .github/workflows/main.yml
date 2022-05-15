@@ -11,7 +11,7 @@ on:
         required: false
         type: number
         default: 9000
-      production_base_url:
+      dev_site_base_url:
         required: true
         type: string
         description: Base URL of the production site
@@ -57,7 +57,7 @@ jobs:
 #        uses: ./
 #        id: psi
 #        with:
-#          production_base_url: ${{ inputs.production_base_url }}
+#          dev_site_base_url: ${{ inputs.dev_site_base_url }}
 #          ssbranch_subdomain_short: ${{ github.head_ref }}
 #          tested_paths: ${{ inputs.tested_paths }}
 #          threshold: 85
