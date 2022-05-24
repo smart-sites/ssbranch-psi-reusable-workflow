@@ -34,7 +34,7 @@ jobs:
     name: Running Page Speed Insights on a testing version of the site
     steps:
       - name: Deploy a branch
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.0
         id: ssbranch-ssh-deploy
         with:
           host: ${{ inputs.ssh_host }}
