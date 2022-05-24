@@ -22,11 +22,6 @@ on:
           JSON list of paths from the site of this project to run the checks against, without base URL
           For example,
           '["/contacts", "/login", "/products/123-mega-pack"]'
-    secrets:
-      PAGE_SPEED_INSIGHTS_KEY:
-        required: true
-      SSBRANCH_PSI_SSH_KEY:
-        required: true
 
 jobs:
   run_psi:
