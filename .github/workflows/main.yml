@@ -42,8 +42,11 @@ jobs:
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           passphrase: ''
           port: ${{ inputs.ssh_port }}
-          script: "ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction;"
+          script: "ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
           debug: true
+        env:
+          SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
+          SSBRANCH_CREATE_SUBDOMAIN: ${{ github.head_ref }}
       - name: Undeploy a branch
         uses: appleboy/ssh-action@master
         id: ssbranch-ssh-undeploy
@@ -52,7 +55,9 @@ jobs:
           username: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
-          script: "ssbranch remove ${{ github.head_ref }} --no-interaction;"
+          script: "ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction;"
+        env:
+          SSBRANCH_REMOVE_NAME: ${{ github.head_ref }}
 #      - name: Checkout repository
 #        uses: actions/checkout@v1
 #      - name: Run Page Speed Insights
