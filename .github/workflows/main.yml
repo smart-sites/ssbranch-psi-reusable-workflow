@@ -42,7 +42,7 @@ jobs:
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           passphrase: ''
           port: ${{ inputs.ssh_port }}
-          script: "ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
+          script: "bash -c \"ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;\""
           debug: true
         env:
           SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
@@ -55,7 +55,7 @@ jobs:
           username: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
-          script: "ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction;"
+          script: "bash -c \"ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction;\""
         env:
           SSBRANCH_REMOVE_NAME: ${{ github.head_ref }}
 #      - name: Checkout repository
