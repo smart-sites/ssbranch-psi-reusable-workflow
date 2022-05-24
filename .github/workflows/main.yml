@@ -23,9 +23,9 @@ on:
           For example,
           '["/contacts", "/login", "/products/123-mega-pack"]'
     secrets:
-      page_speed_insights_key:
+      PAGE_SPEED_INSIGHTS_KEY:
         required: true
-      ssbranch_psi_ssh_key:
+      SSBRANCH_PSI_SSH_KEY:
         required: true
 
 jobs:
@@ -35,20 +35,20 @@ jobs:
     steps:
       - name: Deploy a branch
         uses: appleboy/ssh-action@master
-        id: ssbranch-ssh
+        id: ssbranch-ssh-deploy
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
-          key: ${{ secrets.ssbranch_psi_ssh_key }}
+          key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
           script: "ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction;"
       - name: Undeploy a branch
         uses: appleboy/ssh-action@master
-        id: ssbranch-ssh
+        id: ssbranch-ssh-undeploy
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
-          key: ${{ secrets.ssbranch_psi_ssh_key }}
+          key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
           script: "ssbranch remove ${{ github.head_ref }} --no-interaction;"
 #      - name: Checkout repository
