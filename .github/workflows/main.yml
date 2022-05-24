@@ -40,6 +40,7 @@ jobs:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
+          passphrase: ''
           port: ${{ inputs.ssh_port }}
           script: "ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction;"
           debug: true
