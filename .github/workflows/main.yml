@@ -22,10 +22,6 @@ on:
           JSON list of paths from the site of this project to run the checks against, without base URL
           For example,
           '["/contacts", "/login", "/products/123-mega-pack"]'
-      current_branch:
-        required: true
-        type: string
-        description: "Just put contents of variable github.head_ref here when calling this workflow https://docs.github.com/en/actions/learn-github-actions/contexts#github-context"
     secrets:
       PAGE_SPEED_INSIGHTS_KEY:
         required: true
@@ -36,18 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Running Page Speed Insights on a testing version of the site
     steps:
-      - name: Test head ref
-        shell: bash
-        env:
-          REF: ${{ github.head_ref }}
-        run: |
-          echo "REF: $REF"
       - name: Deploy a branch
         uses: appleboy/ssh-action@v0.1.0
         id: ssbranch-ssh-deploy
         env:
-          SSBRANCH_CREATE_NAME: ${{ secrets.current_branch }}
-          SSBRANCH_CREATE_SUBDOMAIN: ${{ secrets.current_branch }}
+          SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
+          SSBRANCH_CREATE_SUBDOMAIN: ${{ github.head_ref }}
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
