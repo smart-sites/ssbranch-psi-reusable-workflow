@@ -33,7 +33,7 @@ jobs:
     name: Running Page Speed Insights on a testing version of the site
     steps:
       - name: Deploy a branch
-        uses: appleboy/ssh-action@v0.1.0
+        uses: appleboy/ssh-action@v0.1.4
         id: ssbranch-ssh-deploy
         env:
           SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
