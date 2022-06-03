@@ -22,12 +22,15 @@ on:
           JSON list of paths from the site of this project to run the checks against, without base URL
           For example,
           '["/contacts", "/login", "/products/123-mega-pack"]'
+      current_branch:
+        required: true
+        type: string
+        description: 'Just put ${{ github.head_ref }} here when calling this workflow'
     secrets:
       PAGE_SPEED_INSIGHTS_KEY:
         required: true
       SSBRANCH_PSI_SSH_KEY:
         required: true
-
 jobs:
   run_psi:
     runs-on: ubuntu-latest
@@ -36,6 +39,9 @@ jobs:
       - name: Deploy a branch
         uses: appleboy/ssh-action@v0.1.0
         id: ssbranch-ssh-deploy
+        env:
+          SSBRANCH_CREATE_NAME: ${{ secrets.current_branch }}
+          SSBRANCH_CREATE_SUBDOMAIN: ${{ secrets.current_branch }}
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
@@ -45,20 +51,18 @@ jobs:
           envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
           script: "ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
           debug: true
-        env:
-          SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
-          SSBRANCH_CREATE_SUBDOMAIN: ${{ github.head_ref }}
       - name: Undeploy a branch
         uses: appleboy/ssh-action@master
         id: ssbranch-ssh-undeploy
+        env:
+          SSBRANCH_REMOVE_NAME: ${{ secrets.current_branch }}
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
+          envs: SSBRANCH_REMOVE_NAME
           script: "bash -c \"ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction;\""
-        env:
-          SSBRANCH_REMOVE_NAME: ${{ github.head_ref }}
 #      - name: Checkout repository
 #        uses: actions/checkout@v1
 #      - name: Run Page Speed Insights
@@ -66,7 +70,7 @@ jobs:
 #        id: psi
 #        with:
 #          dev_site_base_url: ${{ inputs.dev_site_base_url }}
-#          ssbranch_subdomain_short: ${{ github.head_ref }}
+#          ssbranch_subdomain_short: ${{ secrets.current_branch }}
 #          tested_paths: ${{ inputs.tested_paths }}
 #          threshold: 85
 #          psi_key: ${{ secrets.page_speed_insights_key }}
