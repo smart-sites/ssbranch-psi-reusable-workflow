@@ -42,7 +42,8 @@ jobs:
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           passphrase: ''
           port: ${{ inputs.ssh_port }}
-          script: "bash -c \"ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;\""
+          envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
+          script: "ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
           debug: true
         env:
           SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
