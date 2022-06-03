@@ -36,6 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Running Page Speed Insights on a testing version of the site
     steps:
+      - name: Test head ref
+        shell: bash
+        env:
+          REF: ${{ github.head_ref }}
+        run: |
+          echo "REF: $REF"
       - name: Deploy a branch
         uses: appleboy/ssh-action@v0.1.0
         id: ssbranch-ssh-deploy
