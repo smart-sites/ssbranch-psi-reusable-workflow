@@ -25,7 +25,7 @@ on:
       current_branch:
         required: true
         type: string
-        description: 'Just put \${{ github.head_ref }} here when calling this workflow'
+        description: "Just put ${{ \'${{ github.head_ref }}\' }} here when calling this workflow"
     secrets:
       PAGE_SPEED_INSIGHTS_KEY:
         required: true
