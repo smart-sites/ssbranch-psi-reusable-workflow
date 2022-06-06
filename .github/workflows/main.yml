@@ -46,10 +46,8 @@ jobs:
           port: ${{ inputs.ssh_port }}
           envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
           script: "set -x; [ -d ~/branches/$SSBRANCH_CREATE_NAME/repo ] && cd ~/branches/$SSBRANCH_CREATE_NAME/repo && git pull origin $SSBRANCH_CREATE_NAME || rm -rf ~/branches/$SSBRANCH_REMOVE_NAME && ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
-      - name: Checkout repository
-        uses: actions/checkout@v1
       - name: Run Page Speed Insights
-        uses: smart-sites/ssbranch-psi-action
+        uses: smart-sites/ssbranch-psi-action@master
         id: psi
         with:
           dev_site_base_url: ${{ inputs.dev_site_base_url }}
