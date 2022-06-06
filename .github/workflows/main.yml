@@ -46,7 +46,24 @@ jobs:
           port: ${{ inputs.ssh_port }}
           envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
           script: "set -x; [ -d ~/branches/$SSBRANCH_CREATE_NAME/repo ] && cd ~/branches/$SSBRANCH_CREATE_NAME/repo && git pull origin $SSBRANCH_CREATE_NAME || rm -rf ~/branches/$SSBRANCH_REMOVE_NAME && ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
-          debug: true
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Run Page Speed Insights
+        uses: smart-sites/ssbranch-psi-action
+        id: psi
+        with:
+          dev_site_base_url: ${{ inputs.dev_site_base_url }}
+          ssbranch_subdomain_short: ${{ github.head_ref }}
+          tested_paths: ${{ inputs.tested_paths }}
+          threshold: 85
+          psi_key: ${{ secrets.PAGE_SPEED_INSIGHTS_KEY }}
+      - name: Leave comment with report results on PR
+        id: comment_to_pr
+        uses: marocchino/sticky-pull-request-comment@v2.2.0
+        with:
+          header: Page Speed Insights report for PR \#${{ github.event.pull_request.number }}
+          hide_and_recreate: true
+          message: ${{steps.psi.outputs.report}}
       - name: Undeploy a branch
         uses: appleboy/ssh-action@master
         id: ssbranch-ssh-undeploy
@@ -59,26 +76,3 @@ jobs:
           port: ${{ inputs.ssh_port }}
           envs: SSBRANCH_REMOVE_NAME
           script: "ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction; rm -rf ~/branches/$SSBRANCH_REMOVE_NAME;"
-#      - name: Checkout repository
-#        uses: actions/checkout@v1
-#      - name: Run Page Speed Insights
-#        uses: ./
-#        id: psi
-#        with:
-#          dev_site_base_url: ${{ inputs.dev_site_base_url }}
-#          ssbranch_subdomain_short: ${{ secrets.current_branch }}
-#          tested_paths: ${{ inputs.tested_paths }}
-#          threshold: 85
-#          psi_key: ${{ secrets.page_speed_insights_key }}
-#      - name: Format report results
-#        id: format
-#        uses: actions/github-script@v3
-#        with:
-#          script: |
-#      - name: Leave comment with report results on PR
-#        id: comment_to_pr
-#        uses: marocchino/sticky-pull-request-comment@v2.2.0
-#        with:
-#          header: Page Speed Insights report for PR \#${{ github.event.pull_request.number }}
-#          hide_and_recreate: true
-#          message: ${{steps.psi.outputs.report}}
