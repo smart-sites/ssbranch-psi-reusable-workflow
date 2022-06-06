@@ -41,34 +41,7 @@ jobs:
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
-          key: |
-            -----BEGIN OPENSSH PRIVATE KEY-----
-            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
-            -----END OPENSSH PRIVATE KEY-----
+          key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           passphrase: ''
           port: ${{ inputs.ssh_port }}
           envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
