@@ -1,0 +1,8 @@
+{
+  "inputs": {
+    "dev_site_base_url": "https://smartsites.com",
+    "ssbranch_subdomain": "www",
+    "tested_paths": "[ \"/\", \"/ppc-marketing/\" ]",
+    "threshold": 70
+  }
+}

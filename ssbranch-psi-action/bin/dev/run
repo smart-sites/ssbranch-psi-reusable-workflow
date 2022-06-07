@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+if ! which act > /dev/null 2>&1; then
+    echo 'act is not installed; you can find it at https://github.com/nektos/act'
+    exit 1
+fi
+
+if [ ! -f test-secrets.conf ]; then
+  echo test-secrets.conf is missing, see README.md
+  exit
+fi
+
+act --secret-file test-secrets.conf \
+  --eventpath test-event.json \
+  -v \
+  --insecure-secrets \
+  -W .github/workflows/dev.yml

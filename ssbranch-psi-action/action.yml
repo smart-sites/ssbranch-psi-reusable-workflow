@@ -1,0 +1,32 @@
+name: Smartsites' Page Speed Insights reporter
+description: |
+  Runs Page Speed Insights reports on a list of paths from an ssbranch-enabled
+  web server and formats the result as a comment for Github
+branding:
+  icon: cloud-lightning
+  color: green
+inputs:
+  tested_paths:
+    description: |
+      JSON list of paths from the site of this project to run the checks against, without base URL
+      For example,
+      ["/contacts", "/login", "/products/123-mega-pack"]
+    required: true
+  dev_site_base_url:
+    required: true
+    description: Base URL of the site
+  ssbranch_subdomain:
+    description: |
+      Subdomain without the base domain with the tested version of the site.
+      See [subdomain format rules](https://github.com/smart-sites/ssbranch/tree/master/docs/ru#%D0%BE%D1%81%D0%BE%D0%B1%D0%B5%D0%BD%D0%BD%D0%BE%D1%81%D1%82%D0%B8-%D1%80%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8)
+    required: true
+  threshold:
+    description: Score to pass the PageSpeed test. Useful for setting a performance budget
+    default: "70"
+    required: true
+outputs:
+  report_comment:
+    description: Contents of a Github comment
+runs:
+  using: node12
+  main: index.js

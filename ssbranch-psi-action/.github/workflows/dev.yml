@@ -1,0 +1,26 @@
+name: Development workflow to run the action locally with nektos/act
+on: [push]
+
+jobs:
+  run_psi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v2
+      - name: Install npm dependencies
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - run: npm install
+      - name: Run psi action
+        uses: "./"
+        id: psi
+        with:
+          dev_site_base_url: ${{ github.event.inputs.dev_site_base_url }}
+          tested_paths: ${{ github.event.inputs.tested_paths }}
+          ssbranch_subdomain: ${{ github.event.inputs.ssbranch_subdomain }}
+          threshold: 70
+      - run: echo "${{ steps.psi.outputs.report }}"
+      - run: echo "::set-output name=report::${{ steps.psi.outputs.report }}"
+
+
