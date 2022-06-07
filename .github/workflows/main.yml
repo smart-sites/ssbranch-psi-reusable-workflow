@@ -21,7 +21,7 @@ on:
         description: |
           JSON list of paths from the site of this project to run the checks against, without base URL
           For example,
-          '["/contacts", "/login", "/products/123-mega-pack"]'
+          '["/contacts", "/login", "/products/123-mega-pack.html"]'
     secrets:
       PAGE_SPEED_INSIGHTS_KEY:
         required: true
@@ -33,19 +33,16 @@ jobs:
     name: Running Page Speed Insights on a testing version of the site
     steps:
       - name: Deploy a branch
-        uses: appleboy/ssh-action@v0.1.4
+        uses: fifsky/ssh-action@master
         id: ssbranch-ssh-deploy
-        env:
-          SSBRANCH_CREATE_NAME: ${{ github.head_ref }}
-          SSBRANCH_CREATE_SUBDOMAIN: ${{ github.head_ref }}
         with:
           host: ${{ inputs.ssh_host }}
-          username: ${{ inputs.ssh_username }}
+          user: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
-          passphrase: ''
           port: ${{ inputs.ssh_port }}
-          envs: SSBRANCH_CREATE_NAME,SSBRANCH_CREATE_SUBDOMAIN
-          script: "set -x; [ -d ~/branches/$SSBRANCH_CREATE_NAME/repo ] && cd ~/branches/$SSBRANCH_CREATE_NAME/repo && git pull origin $SSBRANCH_CREATE_NAME || rm -rf ~/branches/$SSBRANCH_REMOVE_NAME && ssbranch create $SSBRANCH_CREATE_NAME $SSBRANCH_CREATE_SUBDOMAIN --no-interaction;"
+          command: |
+            set -x
+            [ -d ~/branches/${{ github.head_ref }}/repo ] && cd ~/branches/${{ github.head_ref }}/repo && git pull origin ${{ github.head_ref }} || rm -rf ~/branches/${{ github.head_ref }}/ && ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction
       - name: Run Page Speed Insights
         uses: ./ssbranch-psi-action
         id: psi
@@ -61,16 +58,17 @@ jobs:
         with:
           header: Page Speed Insights report for PR \#${{ github.event.pull_request.number }}
           hide_and_recreate: true
-          message: ${{steps.psi.outputs.report}}
+          message: ${{ steps.psi.outputs.report }}
       - name: Undeploy a branch
-        uses: appleboy/ssh-action@master
+        uses: fifsky/ssh-action@master
         id: ssbranch-ssh-undeploy
-        env:
-          SSBRANCH_REMOVE_NAME: ${{ github.head_ref }}
         with:
           host: ${{ inputs.ssh_host }}
           username: ${{ inputs.ssh_username }}
           key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
           port: ${{ inputs.ssh_port }}
           envs: SSBRANCH_REMOVE_NAME
-          script: "ssbranch remove $SSBRANCH_REMOVE_NAME --no-interaction; rm -rf ~/branches/$SSBRANCH_REMOVE_NAME;"
+          script: |
+            set -x
+            ssbranch remove ${{ github.head_ref }} --no-interaction
+            rm -rf ~/branches/$SSBRANCH_REMOVE_NAME
