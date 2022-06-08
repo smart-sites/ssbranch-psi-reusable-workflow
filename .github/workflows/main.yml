@@ -44,8 +44,14 @@ jobs:
           command: |
             set -x
             [ -d ~/branches/${{ github.head_ref }}/repo ] && cd ~/branches/${{ github.head_ref }}/repo && git pull origin ${{ github.head_ref }} || rm -rf ~/branches/${{ github.head_ref }}/ && ssbranch create ${{ github.head_ref }} ${{ github.head_ref }} --no-interaction
+      - name: Private actions checkout
+        uses: daspn/private-actions-checkout@v2
+        with:
+          actions_list: '["smart-sites/sbranch-psi-action@master"]'
+          checkout_base_path: ./.github/actions
+          ssh_private_key: ${{ secrets.SSBRANCH_PSI_SSH_KEY }}
       - name: Run Page Speed Insights
-        uses: ./ssbranch-psi-action
+        uses: ./.github/actions/ssbranch-psi-action
         id: psi
         with:
           dev_site_base_url: ${{ inputs.dev_site_base_url }}
